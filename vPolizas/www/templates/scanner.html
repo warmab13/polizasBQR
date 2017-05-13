@@ -1,0 +1,119 @@
+<ion-view view-title="Validar Poliza">
+  <ion-floating-button ng-if="!data" click="scanBarcode()" has-footer="false" button-color="#000000" icon="ion-qr-scanner" icon-color="#fff" text="Escanea" >
+  </ion-floating-button>
+
+  <ion-floating-menu ng-if="data" has-footer="false" menu-color="#000000" menu-icon="ion-navicon-round" menu-open-color="#000000" menu-open-icon="ion-close-round">
+    <ion-floating-item  click="scanBarcode()" has-footer="false" button-color="#000000" icon="ion-qr-scanner" icon-color="#fff" text="Escanea" >
+    </ion-floating-item>
+    <ion-floating-item  click="validatePo(data.a, data.p, data.i)" has-footer="false" button-color="#43a047" icon="ion-android-done" icon-color="#fff" text="Valida" >
+    </ion-floating-item>
+  </ion-floating-menu>
+
+  <ion-content class="padding">
+    <div class="card" ng-if="!data">
+      <div class="item item-divider">
+        Escanea el QR de la poliza.
+      </div>
+      <div class="item item-text-wrap">
+        Para mostrar los datos de la misma recuerda validar la poliza para conocer su estado.
+      </div>
+    </div>
+
+    <div class="card" ng-if="data">
+      <div class="item item-divider">
+        Compañia aseguradora
+      </div>
+      <div class="item item-text-wrap">
+        {{data.a}}
+      </div>
+    </div>
+    <!--<div class="card" ng-if="data">
+      <div class="item item-divider">
+        No. certificado
+      </div>
+      <div class="item item-text-wrap">
+        {{data.c}}
+      </div>
+    </div>-->
+    <div class="card" ng-if="data">
+      <div class="item item-divider">
+        Fecha de emision
+      </div>
+      <div class="item item-text-wrap">
+        {{data.e * 1000 | date: 'yyyy-MM-dd HH:mm:ss Z'}}
+      </div>
+    </div>
+    <div class="card" ng-if="data">
+      <div class="item item-divider">
+        No. De Poliza
+      </div>
+      <div class="item item-text-wrap">
+        {{data.p}}
+      </div>
+    </div>
+    <div class="card" ng-if="data">
+      <div class="item item-divider">
+        Inciso
+      </div>
+      <div class="item item-text-wrap">
+        {{data.i}}
+      </div>
+    </div>
+    <div class="card" ng-if="data">
+      <div class="item item-divider">
+        Inicio vigencia
+      </div>
+      <div class="item item-text-wrap">
+        {{data.iv * 1000 | date: 'yyyy-MM-dd HH:mm:ss Z'}}
+      </div>
+    </div>
+    <div class="card" ng-if="data">
+      <div class="item item-divider">
+        Fin vigencia
+      </div>
+      <div class="item item-text-wrap">
+        {{data.fv * 1000 | date: 'yyyy-MM-dd HH:mm:ss Z'}}
+      </div>
+    </div>
+    <div class="card" ng-if="data">
+      <div class="item item-divider">
+        No. serie del vehiculo
+      </div>
+      <div class="item item-text-wrap">
+        {{data.v.s}}
+      </div>
+    </div>
+    <div class="card" ng-if="data">
+      <div class="item item-divider">
+        Marca vehiculo
+      </div>
+      <div class="item item-text-wrap">
+        {{data.v.f}}
+      </div>
+    </div>
+    <div class="card" ng-if="data">
+      <div class="item item-divider">
+        Tipo vehiculo
+      </div>
+      <div class="item item-text-wrap">
+        {{data.v.t}}
+      </div>
+    </div>
+    <div class="card" ng-if="data">
+      <div class="item item-divider">
+        Modelo del vehiculo
+      </div>
+      <div class="item item-text-wrap">
+        {{data.v.m}}
+      </div>
+    </div>
+    <div class="card" ng-if="data">
+      <div class="item item-divider">
+        Tipo de servicio
+      </div>
+      <div class="item item-text-wrap">
+        {{data.v.r}}
+      </div>
+    </div>
+  </ion-content>
+</ion-view>
