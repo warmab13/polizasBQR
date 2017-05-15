@@ -5,7 +5,15 @@
       <a class="button icon-right ion-android-close" ng-click="closeModalValidez()"></a>
     </div>
   </ion-header-bar>
-  <ion-content>
+  <ion-content class="padding">
+    <div class="card" ng-if="estado" ng-class="{validate: isValid===true, nValidate: isValid===false}">
+      <div class="item item-divider" style="color:white">
+       Estado de la poliza
+      </div>
+      <div class="item item-text-wrap">
+        <b style="color:white">{{estado}}</b>
+      </div>
+    </div>
     <div class="card" ng-if="data">
       <div class="item item-divider">
         Validez de tu poliza
