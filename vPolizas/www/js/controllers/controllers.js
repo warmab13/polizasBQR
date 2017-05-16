@@ -87,20 +87,35 @@ angular.module('starter.controllers', [])
       const token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhIjoxMjMsImMiOjEwMDAwMDAyMDE1MDMyNDMsImUiOjE0OTQ2NTUyMDAsInAiOiIxMjM0NTY3ODkiLCJpIjoiQiIsIml2IjoxNDk0NzQxNjAwLCJmdiI6MTUyNjE5MTIwMCwidiI6eyJzIjoiMzIxNDU2OTg3NDEiLCJmIjoxLCJ0IjoxLCJtIjoyMDE1LCJyIjoiUGFydGljdWxhciJ9fQ.b1N7pBhBtTcEYIbhBSTeqddw673rCvtAWZqIAn-DNp0NE-r4DAl-hCCYgvPlSUZZumvynx1s0FApo2W_1qU9WAN3g6oLF8buHCF_8wR67P-2vgHf8Ave-eSEp-1LNBSMzIgxUb2ReQMHMxh3WBOG4YA1bzjDahpTI34eZK4KYz0";
 
       try {
-        const web3 = new Web3(new Web3.providers.HttpProvider("http://192.168.43.111:22000"));
-        const MyContract =  web3.eth.contract([{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"bytes32"}],"name":"polizas","outputs":[{"name":"inicioVigencia","type":"uint256"},{"name":"finVigencia","type":"uint256"}],"type":"function"},{"constant":false,"inputs":[{"name":"idAseguradora","type":"uint8"},{"name":"addr","type":"address"}],"name":"registraAseguradora","outputs":[],"type":"function"},{"constant":false,"inputs":[{"name":"noPoliza","type":"bytes32"},{"name":"inicioVigencia","type":"uint256"},{"name":"finVigencia","type":"uint256"}],"name":"endosaPoliza","outputs":[],"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint8"}],"name":"aseguradoras","outputs":[{"name":"","type":"address"}],"type":"function"},{"constant":false,"inputs":[{"name":"noPoliza","type":"bytes32"},{"name":"inicioVigencia","type":"uint256"},{"name":"finVigencia","type":"uint256"}],"name":"registraPoliza","outputs":[],"type":"function"},{"inputs":[],"type":"constructor"}]);
-        const contractInstance = MyContract.at('0x3950943d8d86267c04a4bba804f9f0b8a01c2fb8');
+        const web3 = new Web3(new Web3.providers.HttpProvider("http://quorum.nwd.mx:22000"));
+        const MyContract =  web3.eth.contract([{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"bytes32"}],"name":"polizas","outputs":[{"name":"inicioVigencia","type":"uint256"},{"name":"finVigencia","type":"uint256"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"idAseguradora","type":"uint8"},{"name":"addr","type":"address"}],"name":"registraAseguradora","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"noPoliza","type":"bytes32"},{"name":"inicioVigencia","type":"uint256"},{"name":"finVigencia","type":"uint256"}],"name":"endosaPoliza","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint8"}],"name":"aseguradoras","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"noPoliza","type":"bytes32"},{"name":"inicioVigencia","type":"uint256"},{"name":"finVigencia","type":"uint256"}],"name":"registraPoliza","outputs":[],"payable":false,"type":"function"},{"inputs":[],"payable":false,"type":"constructor"}]);
+        const contractInstance = MyContract.at('0x8a5e2a6343108babed07899510fb42297938d41f');
         const addrAseguradora = contractInstance.aseguradoras(1);
         console.log(addrAseguradora);
         console.log(contractInstance.polizas(addrAseguradora, p + '-' + i));
         const validez = contractInstance.polizas(addrAseguradora, p + '-' + i)
+        console.log(validez);
+
         try {
           var isValid = KJUR.jws.JWS.verify($scope.token, cer, ["RS256"]);
           //var isValid = KJUR.jws.JWS.verify("Certicate Valid", cer, ["RS256"]);
+          var d = new Date();
           if(isValid === true){
-            var estado = 'La poliza se encuentra dentro de la vigencia'
+            if(validez[0].c[0]===0){
+              var estado = 'La poliza no se encuentra registrada';
+              $scope.status = 0;
+            }
+            else if(validez[1].c[0]*1000 <= d.getTime()){
+              console.log("Validez");
+              console.log(validez[0].c[0]*1000);
+              var estado = 'La poliza no se encuentra vigente';
+              $scope.status = 1;
+            }else{
+              var estado = 'La poliza se encuentra vigente';
+              $scope.status = 2;
+            }
           }else{
-            var estado = 'La poliza no se encuentra dentro de la vigencia'
+            console.log("Poliza no verificada");
           }
         } catch (e) {
           $scope.showAlert(e);
@@ -133,6 +148,16 @@ angular.module('starter.controllers', [])
         });
       };
 
+      $scope.showAlert = function(error) {
+       var alertPopup = $ionicPopup.alert({
+         title: 'Error',
+         template: error
+       });
+
+       alertPopup.then(function(res) {
+         console.log('Error al escanear el QR');
+       });
+     };
 
 
      $ionicModal.fromTemplateUrl('templates/modalValidate.html', {
@@ -140,8 +165,6 @@ angular.module('starter.controllers', [])
        animation: 'slide-in-up'
      }).then(function(modal) {
        $scope.modal = modal;
-       $scope.validateCer = function(){
-       }
      });
      $scope.openModalValidez = function(val, estado, valid) {
        $scope.modal.show();

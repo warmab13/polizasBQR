@@ -6,7 +6,7 @@
     </div>
   </ion-header-bar>
   <ion-content class="padding">
-    <div class="card" ng-if="estado" ng-class="{validate: isValid===true, nValidate: isValid===false}">
+    <div class="card" ng-if="estado" ng-class="{validate: status===2, nValidate: status===1, noExist: status===0}">
       <div class="item item-divider" style="color:white">
        Estado de la poliza
       </div>
